@@ -1,2 +1,2 @@
-# Gestion_Biblioth-que
+# Gestion_Bibliothéque
 PROJET DE GROUPE EN PHP
