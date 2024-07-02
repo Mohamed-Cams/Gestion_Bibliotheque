@@ -7,6 +7,15 @@ class Personne {
     private $mdp;
     private $role;
 
+    public function __construct($nom,$pre,$email,$mdp,$role)
+    {
+        self::$nom = $nom;
+        self::$prenom = $pre;
+        self::$email = $email;
+        self::$mdp = $mdp;
+        self::$role = $role;
+    }
+
     public function authentifier(){}
     public function rerchercher(){}
     public function consulter(){}
