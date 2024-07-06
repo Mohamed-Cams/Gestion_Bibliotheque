@@ -1,13 +1,14 @@
-<?
+<?php
 
-class Personne {
+class Personne
+{
     private $nom;
     private $prenom;
     private $email;
     private $mdp;
     private $role;
 
-    public function __construct($nom,$pre,$email,$mdp,$role)
+    public function __construct($nom, $pre, $email, $mdp, $role)
     {
         self::$nom = $nom;
         self::$prenom = $pre;
@@ -16,39 +17,55 @@ class Personne {
         self::$role = $role;
     }
 
-    public function authentifier(){}
-    public function rerchercher(){}
-    public function consulter(){}
+    public function authentifier()
+    {
+    }
+    public function rerchercher()
+    {
+    }
+    public function consulter()
+    {
+    }
 
-    public function setNom($nom){
+    public function setNom($nom)
+    {
         $nom = $nom;
     }
-    public function setPrenom($prenom){
+    public function setPrenom($prenom)
+    {
         $prenom = $prenom;
     }
-    public function setEmail($email){
+    public function setEmail($email)
+    {
         $email = $email;
     }
-    public function setMdp($mdp){
+    public function setMdp($mdp)
+    {
         $mdp = $mdp;
     }
-    public function setRole($role){
+    public function setRole($role)
+    {
         $role = $role;
     }
 
-    public function getNom(){
+    public function getNom()
+    {
         return self::$nom;
     }
-     public function getPrenom(){
-        return  self::$prenom;
+    public function getPrenom()
+    {
+        return self::$prenom;
     }
-    public function getEmail($email){
+    public function getEmail($email)
+    {
         return self::$email;
     }
-    public function getMdp($mdp){
+    public function getMdp($mdp)
+    {
         return self::$mdp;
     }
-    public function getRole($role){
+    public function getRole($role)
+    {
         return self::$role;
     }
 }

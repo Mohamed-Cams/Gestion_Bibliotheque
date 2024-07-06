@@ -1,20 +1,25 @@
 <?
 
-class Role{
+class Role
+{
     private $id;
     private $nom;
 
-    public function setId($id){
+    public function setId($id)
+    {
         $id = $id;
     }
-    public function setNom($nom){
+    public function setNom($nom)
+    {
         $nom = $nom;
     }
 
-    public function getId(){
+    public function getId()
+    {
         return self::$id;
     }
-    public function getNom(){
+    public function getNom()
+    {
         return self::$nom;
     }
 
