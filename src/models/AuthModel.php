@@ -1,7 +1,7 @@
 <?php
 // AuthModel.php
 
-require_once __DIR__ . '/../config/config.php';
+require_once __DIR__ . '/../../config/config.php';
 
 class AuthModel
 {
