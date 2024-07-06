@@ -36,17 +36,17 @@ class AuthController
 
             switch ($_SESSION['role']) {
                 case 'admin':
-                    header('Location: ../views/admin_page.php');
+                    header('Location: ./views/admin_page.php');
                     exit;
                 case 'bibliothecaire':
-                    header('Location: ../views/bibliothecaire_page.php');
+                    header('Location: ./views/bibliothecaire_page.php');
                     exit;
                 case 'utilisateur':
-                    header('Location: ../views/utilisateur_page.php');
+                    header('Location: ./views/utilisateur_page.php');
                     exit;
                 default:
                     // Rediriger vers une page par défaut en cas de rôle inconnu
-                    header('Location: ../public/index.php');
+                    header('Location: ./acceuil.php');
                     exit;
             }
         } else {
