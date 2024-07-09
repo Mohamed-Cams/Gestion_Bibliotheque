@@ -9,9 +9,7 @@ class Bibliothecaire extends Personne
     {
     }
 
-    /* public function __construct($nom, $prenom, $email, $telephone, $adresse) {
-        parent::__construct($nom, $prenom, $email, $telephone, $adresse);
-    } */
+
 
     public function ajouterLivre($titre, $auteur, $anne_pub, $genre, $nb_exemp, $p_couverture)
     {
@@ -74,7 +72,7 @@ class Bibliothecaire extends Personne
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-
+    // Check Point 
     public function listerUtilisateurs()
     {
         $req = $GLOBALS['pdo']->query("SELECT * FROM personnes");
