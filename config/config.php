@@ -5,7 +5,7 @@
 
 $host = "mysql:host=127.0.0.1;dbname=bibliotheque";
 $username = "root";
-$password = "31012003";
+$password = "";
 
 try {
     $pdo = new PDO($host, $username, $password);

@@ -1,30 +1,37 @@
 <?php
+class Livre
+{
+    private $pdo;
 
-class Livre{
+    public function __construct($pdo)
+    {
+        $this->pdo = $pdo;
+    }
 
-    private $id;
-    private $titre;
-    private $auteur;
-    private $anne_pub;
-    private $genre;
-    private $nb_exemp;
+    public function getNbExemplaires($livre_id)
+    {
+        try {
+            $sql = "SELECT nb_exemp FROM livres WHERE id = :livre_id";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(':livre_id', $livre_id, PDO::PARAM_INT);
+            $stmt->execute();
+            $nb_exemplaires = $stmt->fetchColumn();
 
-    public function getId(){
-        return self::$id;
+            return $nb_exemplaires;
+        } catch (PDOException $e) {
+            return "Erreur PDO : " . $e->getMessage();
+        }
     }
-    public function getTitre(){
-        return self::$titre;
-    }
-    public function getAuteur(){
-        return self::$auteur;
-    }
-    public function getAnne(){
-        return self::$anne_pub;
-    }
-    public function getGenre(){
-        return self::$genre;
-    }
-    public function getExemplaire(){
-        return self::$nb_exemp;
+
+    public function updateNbExemplairesEmp($livre_id, $amount)
+    {
+        try {
+            $stmt = $this->pdo->prepare("UPDATE livres SET nb_exemp = nb_exemp - :amount WHERE id = :livre_id");
+            $stmt->bindParam(':livre_id', $livre_id, PDO::PARAM_INT);
+            $stmt->bindParam(':amount', $amount, PDO::PARAM_INT);
+            $stmt->execute();
+        } catch (PDOException $e) {
+            return false;
+        }
     }
 }
