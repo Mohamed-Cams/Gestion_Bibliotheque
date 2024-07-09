@@ -5,7 +5,8 @@ require_once '../models/Bibliothecaire.php';
 class BibliothecaireController
 {
 
-    private $bibliothecaire;
+    public  $bibliothecaire;
+
 
     public function __construct()
     {
@@ -62,8 +63,8 @@ class BibliothecaireController
 
     public function historiqueEmprunt()
     {
-        $historique = $this->bibliothecaire->historiqueEmprunt();
-        include '../views/bibliothecaire/historiqueEmprunt.php';
+        $this->bibliothecaire->historiqueEmprunt();
+        //include '../views/bibliothecaire/historiqueEmprunt.php';
     }
 
     public function listerUtilisateurs()
@@ -129,5 +130,19 @@ class BibliothecaireController
         // Rediriger vers la page de connexion ou la page d'accueil
         header("Location: ../acceuil");
         exit;
+    }
+
+    public function ajouterPersonne()
+    {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $nom = $_POST['nom'];
+            $prenom = $_POST['prenom'];
+            $email = $_POST['email'];
+            $mdp = $_POST['mdp'];
+            $role = $_POST['role'];
+            $this->bibliothecaire->ajouterPersonne($nom, $prenom, $email, $mdp, $role);
+
+            header("Location: ../views/admin_page.php");
+        }
     }
 }

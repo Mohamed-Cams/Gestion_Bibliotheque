@@ -7,7 +7,7 @@ class Personne
     private $email;
     private $mdp;
     private $role;
-    private $nb_emprunts;
+    private $nb_emp;
 
     private $pdo;
     public function __construct($pdo)
@@ -55,9 +55,9 @@ class Personne
         $role = $role;
     }
 
-    public function setNbEmprunt($nb_emprunts)
+    public function setNbEmp($nb_emp)
     {
-        $nb_emprunts = $nb_emprunts;
+        $nb_emp = $nb_emp;
     }
 
     public function getNom()
@@ -81,15 +81,15 @@ class Personne
         return self::$role;
     }
 
-    public function getNbEmprunt($email)
+    public function getNbEmp($email)
     {
         try {
-            $sql = "SELECT nb_emprunts FROM personnes WHERE email = :email";
+            $sql = "SELECT nb_emp FROM personnes WHERE email = :email";
             $stmt = $this->pdo->prepare($sql);
             $stmt->bindParam(':email', $email, PDO::PARAM_STR);
             $stmt->execute();
-            $nb_emprunts = $stmt->fetchColumn();
-            return $nb_emprunts;
+            $nb_emp = $stmt->fetchColumn();
+            return $nb_emp;
         } catch (PDOException $e) {
             // Gérer les erreurs PDO ici
             return false;
@@ -99,7 +99,7 @@ class Personne
     public function updateNbEmpruntEmp($email, $amount)
     {
         try {
-            $stmt = $this->pdo->prepare("UPDATE personnes SET nb_emprunts = nb_emprunts + :amount WHERE email = :email");
+            $stmt = $this->pdo->prepare("UPDATE personnes SET nb_emp = nb_emp + :amount WHERE email = :email");
             $stmt->bindParam(':email', $email, PDO::PARAM_STR);
             $stmt->bindParam(':amount', $amount, PDO::PARAM_INT);
             $stmt->execute();

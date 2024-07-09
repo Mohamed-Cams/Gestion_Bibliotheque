@@ -69,8 +69,9 @@ class Bibliothecaire extends Personne
                 ORDER BY date_emprunt DESC";
 
         $stmt = $GLOBALS['pdo']->prepare($sql);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $historique = $stmt->execute();
+        // $historique = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $historique;
     }
     // Check Point 
     public function listerUtilisateurs()
@@ -152,6 +153,16 @@ class Bibliothecaire extends Personne
         global $pdo;
         $req = $pdo->prepare("UPDATE users SET Nb_emprunt = Nb_emprunt + 1 WHERE User_id = :user_id");
         $req->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+        $req->execute();
+    }
+    public function ajouterPersonne($nom, $prenom, $email, $mdp, $role)
+    {
+        $req = $GLOBALS['pdo']->prepare("INSERT INTO personnes (nom, prenom, email, mdp, role,nb_emp) VALUES (:nom, :prenom, :email, :mdp, :role,0)");
+        $req->bindParam(':nom', $nom);
+        $req->bindParam(':prenom', $prenom);
+        $req->bindParam(':email', $email);
+        $req->bindParam(':mdp', $mdp);
+        $req->bindParam(':role', $role, PDO::PARAM_INT);
         $req->execute();
     }
 }

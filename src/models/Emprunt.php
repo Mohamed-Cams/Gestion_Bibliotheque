@@ -21,9 +21,9 @@ class Emprunt
             $stmt = $this->pdo->prepare($sql);
             $stmt->bindParam(':user_email', $user_email, PDO::PARAM_STR);
             $stmt->execute();
-            $nb_emprunts = $stmt->fetchColumn();
+            $nb_emp = $stmt->fetchColumn();
 
-            if ($nb_emprunts >= 5) {
+            if ($nb_emp >= 5) {
                 throw new Exception("L'utilisateur a dépassé la limite des emprunts.");
             }
 
@@ -92,7 +92,7 @@ class Emprunt
             $stmt = $this->pdo->prepare("UPDATE livres SET nb_exemp = nb_exemp + 1 WHERE id = :livre_id");
             $stmt->execute(['livre_id' => $livre_id]);
 
-            $stmt = $this->pdo->prepare("UPDATE personnes SET nb_emprunts = nb_emprunts - 1 WHERE email = :user_email");
+            $stmt = $this->pdo->prepare("UPDATE personnes SET nb_emp = nb_emp - 1 WHERE email = :user_email");
             $stmt->execute(['user_email' => $user_email]);
 
             $this->pdo->commit();

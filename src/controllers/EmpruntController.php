@@ -1,8 +1,8 @@
 <?php
 require_once '../../config/config.php';
-require_once '../../models/Emprunt.php';
-require_once '../../models/Personne.php';
-require_once '../../models/Livre.php';
+require_once '../models/Emprunt.php';
+require_once '../models/Personne.php';
+require_once '../models/Livre.php';
 
 class EmpruntController
 {
@@ -19,7 +19,7 @@ class EmpruntController
         $this->empruntModel = new Emprunt($pdo);
     }
 
-    public function ajouterEmprunt()
+    public function ajouterEmprunt($livre_id)
     {
         if (session_status() === PHP_SESSION_NONE) {
             session_start(); // Assurez-vous que la session est démarrée
@@ -33,7 +33,7 @@ class EmpruntController
 
             // Utiliser l'email de l'utilisateur pour l'ID
             $user_email = $_SESSION['user_id'];
-            $livre_id = $_POST['id'];
+            //$livre_id = $_POST['id'];
 
             try {
                 // Start transaction
@@ -42,7 +42,7 @@ class EmpruntController
                 }
 
                 // Check the number of current borrowings
-                $nb_emprunt = $this->personne->getNbEmprunt($user_email);
+                $nb_emprunt = $this->personne->getNbEmp($user_email);
 
                 // Check the number of available copies
                 $nb_exemplaires = $this->livre->getNbExemplaires($livre_id);
@@ -81,7 +81,7 @@ class EmpruntController
         }
     }
 
-    public function rendreEmprunt()
+    public function rendreEmprunt($user_email, $livre_id, $date_retour)
     {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
@@ -89,14 +89,11 @@ class EmpruntController
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
-                $_SESSION['ErrorMessage'] = "Vous devez être connecté en tant qu'admin pour rendre un emprunt.";
-                header("Location: ../views/bibliothecaire/admin_page.php");
+                $_SESSION['ErrorMessage'] = "Vous devez être connecté en tant qu'bibliothecaire pour rendre un emprunt.";
                 exit;
             }
 
-            $user_email = $_POST['fk_utilisateur'];
-            $livre_id = $_POST['id'];
-            $date_retour = $_POST['date_retour'];
+
 
             try {
                 $message = $this->empruntModel->rendreEmprunt($user_email, $livre_id, $date_retour);
@@ -104,6 +101,8 @@ class EmpruntController
             } catch (Exception $e) {
                 $_SESSION['ErrorMessage'] = $e->getMessage();
             }
+
+
             echo "changer";
             //header("Location: ../../views/bibliothecaire/supprimerLivre.php");
             //exit;

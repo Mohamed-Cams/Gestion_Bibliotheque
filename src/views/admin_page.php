@@ -25,10 +25,26 @@ if (isset($_POST['supprimer'])) {
 
     require_once '../controllers/BibliothecaireController.php';
 
+    $id = $_POST["supprimer"];
+
     $controller = new BibliothecaireController();
     $controller->supprimerLivre($id);
+
+    header('Location: ./admin_page.php');
 }
 
+/* if (isset($_POST['modifier'])) {
+
+    require_once '../controllers/BibliothecaireController.php';
+
+    $id = $_POST["supprimer"];
+
+    $controller = new BibliothecaireController();
+    $controller->supprimerLivre($id);
+
+    header('Location: ./admin_page.php');
+}
+ */
 ?>
 
 <!DOCTYPE html>
@@ -47,7 +63,7 @@ if (isset($_POST['supprimer'])) {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous">
     </script>
-    <link href="../../css/stylea.css" rel="stylesheet" type="" />
+    <link href="../css/stylea.css" rel="stylesheet" type="" />
 </head>
 
 <body>
@@ -60,6 +76,9 @@ if (isset($_POST['supprimer'])) {
             <a href="../acceuil.php">
                 <button class="btnLogout">Deconnexion</button>
             </a>
+            <a href="./gestion_emp.php">
+                <button class="btnLogout">Emprunt</button>
+            </a>
         </nav>
     </header>
 
@@ -68,7 +87,7 @@ if (isset($_POST['supprimer'])) {
             <ion-icon name="close-outline"></ion-icon>
         </span>
         <div class="form-box login">
-            <h2>Ajout</h2>
+            <h2>Ajout Livre</h2>
             <form action="admin_page.php" method="POST">
                 <div class="input-box">
                     <span class="icon">
@@ -113,6 +132,8 @@ if (isset($_POST['supprimer'])) {
                     <label for="">Couverture</label>
                 </div>
                 <button type="submit" class="btn" name="ajoutLivre">Enregistrer</button>
+                <br>
+                <a href="./personne_ajout.php">Personne</a>
             </form>
         </div>
     </div>
@@ -148,8 +169,7 @@ if (isset($_POST['supprimer'])) {
                         <th>Anné_Pub</th>
                         <th>Genre</th>
                         <th>Exemplaire</th>
-                        <th>Option 1</th>
-                        <th>Option 2</th>
+                        <th colspan="2">Option</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -178,7 +198,10 @@ if (isset($_POST['supprimer'])) {
                             <a href="" class="btn btn-warning">Modifier</a>
                         </td>
                         <td>
-                            <a href="" class="btn btn-danger">Supprimer</a>
+                            <form action="" method="POST">
+                                <button value="<?= $row['id']; ?>" class=" btn btn-danger" name="supprimer"
+                                    type="submit">Supprimer</button>
+                            </form>
                         </td>
                     </tr>
                     <?php
@@ -204,14 +227,12 @@ if (isset($_POST['supprimer'])) {
                         <th>Nom</th>
                         <th>Prenom</th>
                         <th>Email</th>
-                        <th>Mot de Pass</th>
-                        <th>Option 1</th>
-                        <th>Option 2</th>
+                        <th colspan="2">Option</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php
-                    $query = "SELECT * FROM personnes WHERE role = '3'";
+                    $query = "SELECT * FROM personnes";
                     $stmt = $pdo->prepare($query);
                     $stmt->execute();
 
@@ -225,7 +246,6 @@ if (isset($_POST['supprimer'])) {
                         <td><?= $row['nom']; ?></td>
                         <td><?= $row['prenom']; ?></td>
                         <td><?= $row['email']; ?></td>
-                        <td><?= $row['mdp']; ?></td>
                         <td>
                             <a href="" class="btn btn-warning">Modifier</a>
                         </td>
