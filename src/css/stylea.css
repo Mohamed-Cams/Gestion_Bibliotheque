@@ -15,6 +15,10 @@ body {
   background-position: center;
 }
 
+.h1a {
+  color: #fff;
+}
+
 header {
   position: absolute;
   top: 0;
@@ -57,7 +61,7 @@ header {
 }
 .navigation .btnLogout:hover {
   background: #fff;
-  color: #7a0b0b;
+  color: #162938;
 }
 
 .wrapper {

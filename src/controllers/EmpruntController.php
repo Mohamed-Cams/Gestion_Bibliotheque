@@ -109,16 +109,35 @@ class EmpruntController
         }
     }
 
-    public function getLivresEmpruntes($user_email)
+    /* public function getLivresEmpruntes($user_email)
     {
-        /*  return $this->empruntModel->getLivresEmpruntes($user_email); */
-    }
+          return $this->empruntModel->getLivresEmpruntes($user_email); 
+    } */
 
     public function getLivresEnCoursPourUtilisateur($user_email)
     {
         return $this->empruntModel->getLivresEnCoursPourUtilisateur($user_email);
     }
 
+   /*  public function getUtilisateursAvecEmprunts()
+    {
+        $sql = "SELECT e.fk_utilisateur, p.prenom FROM emprunts e JOIN personnes p ON e.fk_utilisateur = p.email WHERE e.date_retour IS NULL";
+        $stmt = $this->pdo->prepare($sql);
+        //$stmt->execute(['user_email' => $user_email]);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } */
+
+    public function getLivresEmpruntes()
+    {
+        return $this->empruntModel->getLivresEmpruntes();
+    }
+
+    /* public function getLivresEnCoursPourUtilisateur($user_email)
+    {
+        return $this->empruntModel->getLivresEnCoursPourUtilisateur($user_email);
+    }
+ */
     public function getUtilisateursAvecEmprunts()
     {
         $sql = "SELECT e.fk_utilisateur, p.prenom FROM emprunts e JOIN personnes p ON e.fk_utilisateur = p.email WHERE e.date_retour IS NULL";
@@ -126,5 +145,12 @@ class EmpruntController
         //$stmt->execute(['user_email' => $user_email]);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+
+
+    public function getAllEmprunts()
+    {
+        return $this->empruntModel->getAllEmprunts();
     }
 }

@@ -32,19 +32,20 @@ if (isset($_POST['supprimer'])) {
 
     header('Location: ./admin_page.php');
 }
-
-/* if (isset($_POST['modifier'])) {
+if (isset($_POST['supprimerp'])) {
 
     require_once '../controllers/BibliothecaireController.php';
 
-    $id = $_POST["supprimer"];
+    $email = $_POST["supprimerp"];
 
     $controller = new BibliothecaireController();
-    $controller->supprimerLivre($id);
+    $controller->supprimerPersonne($email);
 
     header('Location: ./admin_page.php');
 }
- */
+if (isset($_POST['deconnection'])) {
+    $bibliothequeController->logout();
+}
 ?>
 
 <!DOCTYPE html>
@@ -68,16 +69,19 @@ if (isset($_POST['supprimer'])) {
 
 <body>
     <header>
-        <img src="../../images/open-book-svgrepo-com.svg" class="logo" alt="">
+        <img src="../../images/modele-logo-librairie-design-plat-dessine-main.png" class="logo" alt="">
         <img src="../../Images/admin_13087915.svg" height="30px" alt="">
         <h3 class="logophrase">Admin Booky</h3>
         <nav class="navigation">
             <button class="btnLogin-popup">Ajouter</button>
-            <a href="../acceuil.php">
-                <button class="btnLogout">Deconnexion</button>
-            </a>
-            <a href="./gestion_emp.php">
+            <form action="" method="post">
+                <button class="btnLogout" name="deconnection">Déconnexion</button></a>
+            </form>
+            <a href="./gest ion_emp.php">
                 <button class="btnLogout">Emprunt</button>
+            </a>
+            <a href="./recherche.php">
+                <button class="btnLogout">Rechercher</button>
             </a>
         </nav>
     </header>
@@ -140,21 +144,7 @@ if (isset($_POST['supprimer'])) {
 
     <main>
         <br><br><br><br><br>
-        <div class="container">
-            <form action="search.php" method="get" style="width: 100%; max-width: 30rem">
 
-                <div class="input-group my-5">
-                    <input type="text" class="form-control" name="key" placeholder="Rechercher livre..."
-                        aria-label="Rechercher livre..." aria-describedby="basic-addon2">
-
-                    <button class="input-group-text
-                btn btn-primary" id="basic-addon2">
-                        <img src="../../Images/search-svgrepo-com.svg" width="20">
-
-                    </button>
-                </div>
-            </form>
-        </div>
 
         <div class="container">
             <table class="table table-bordered shadow">
@@ -195,12 +185,12 @@ if (isset($_POST['supprimer'])) {
                         <td><?= $row['genre']; ?></td>
                         <td><?= $row['nb_exemp']; ?></td>
                         <td>
-                            <a href="" class="btn btn-warning">Modifier</a>
+                            <a href="modifierLivre.php?id=<?= $row['id']; ?>" class="btn btn-warning">Modifier</a>
                         </td>
                         <td>
                             <form action="" method="POST">
-                                <button value="<?= $row['id']; ?>" class=" btn btn-danger" name="supprimer"
-                                    type="submit">Supprimer</button>
+                                <button value="<?= $row['id']; ?>" class=" btn btn-danger"
+                                    name="supprimer">Supprimer</button>
                             </form>
                         </td>
                     </tr>
@@ -247,10 +237,14 @@ if (isset($_POST['supprimer'])) {
                         <td><?= $row['prenom']; ?></td>
                         <td><?= $row['email']; ?></td>
                         <td>
-                            <a href="" class="btn btn-warning">Modifier</a>
+                            <a href="modifierPersonne.php?email=<?= $row['email']; ?>"
+                                class="btn btn-warning">Modifier</a>
                         </td>
                         <td>
-                            <a href="" class="btn btn-danger">Supprimer</a>
+                            <form action="" method="POST">
+                                <button value="<?= $row['email']; ?>" class=" btn btn-danger"
+                                    name="supprimerp">Supprimer</button>
+                            </form>
                         </td>
                     </tr>
                     <?php

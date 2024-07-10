@@ -30,6 +30,8 @@ class AuthController
             // Authentification réussie
             session_start();
             $_SESSION['user_id'] = $user['email'];
+            $_SESSION['prenom'] = $user['prenom'];
+            $_SESSION['nom'] = $user['nom'];
 
             $role = $this->authModel->findRoleById($user['role']);
             $_SESSION['role'] = $role['nom'];

@@ -25,6 +25,7 @@ header {
   justify-content: space-between;
   align-items: center;
   z-index: 99;
+  background-color: #162938;
 }
 
 .navigation a {

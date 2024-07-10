@@ -1,62 +1,48 @@
-<!-- <!DOCTYPE html>
-<html>
-
-<head>
-    <title>Page Gestion</title>
-    <link href="../css/stylea.css" rel="stylesheet" type="" />
-</head>
-
-<body>
-    <header>
-        <img src="../../images/open-book-svgrepo-com.svg" class="logo" alt="">
-        <img src="../../Images/admin_13087915.svg" height="30px" alt="">
-        <h3 class="logophrase">Admin Booky</h3>
-        <nav class="navigation">
-            <a href="./admin_page.php">
-                <button class="btnLogout">Retour</button>
-            </a>
-            <a href="../acceuil.php">
-                <button class="btnLogout">Deconnexion</button>
-            </a>
-        </nav>
-    </header>
-
-
-</body>
-
-</html> -->
-
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
-require_once '../../config/config.php';
-require_once '../controllers/EmpruntController.php';
-require_once '../controllers/BibliothecaireController.php';
-
 session_start();
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
+// Inclusion des fichiers nécessaires
+require_once '../../config/config.php';
+require_once '../models/Bibliotheque.php';
+require_once '../models/Bibliothecaire.php';
+require_once '../controllers/BibliothecaireController.php';
+require_once '../controllers/EmpruntController.php';
+
+// Initialisation des contrôleurs
+$bibliothequeController = new BibliothecaireController();
 $empruntController = new EmpruntController($pdo);
-$biblioController = new BibliothecaireController();
 
-$utilisateurs = $empruntController->getUtilisateursAvecEmprunts();
-// $biblioController->historiqueEmprunt();
+// Récupération des données nécessaires pour l'affichage
+$utilisateurs = $bibliothequeController->getAllUtilisateurs();
+$livresEmpruntes = $empruntController->getLivresEmpruntes();
+$emprunts = $empruntController->getAllEmprunts();
 
-//var_dump($utilisateurs);
+// Logique pour gérer les différentes actions (POST et GET)
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['action'])) {
+        $action = $_POST['action'];
 
-// Traitement du formulaire pour sélectionner l'utilisateur
-if (!empty($_POST['fk_utilisateur'])) {
-    $user_email = $_POST['fk_utilisateur'];
-    $livresEmpruntes = $empruntController->getLivresEnCoursPourUtilisateur($user_email);
-    var_dump($livresEmpruntes);
+        // Actions pour la gestion des emprunts
+        if ($action === 'rendre_emprunt') {
+            $fk_utilisateur = isset($_POST['fk_utilisateur']) ? $_POST['fk_utilisateur'] : null;
+            $id_livre = isset($_POST['id']) ? $_POST['id'] : null;
+            $date_retour = isset($_POST['date_retour']) ? $_POST['date_retour'] : null;
+
+            if ($fk_utilisateur !== null && $id_livre !== null && $date_retour !== null) {
+                $empruntController->rendreEmprunt($fk_utilisateur, $id_livre, $date_retour);
+            } else {
+                // Gérer l'erreur ou le cas où une valeur requise est manquante
+                $_SESSION['ErrorMessage'] = "Tous les champs doivent être remplis pour rendre l'emprunt.";
+            }
+        }
+    }
 }
 
-if (isset($_POST['livre_id'])) {
-    $user_email = $_POST['fk_utilisateur'];
-    $livre_id = $_POST['id'];
-    $date_retour = $_POST['date_retour'];
-
-    $empruntController->rendreEmprunt($user_email, $livre_id, $date_retour);
+if (isset($_POST['deconnection'])) {
+    $bibliothequeController->logout();
 }
 ?>
 
@@ -65,75 +51,65 @@ if (isset($_POST['livre_id'])) {
 
 <head>
     <meta charset="UTF-8">
-    <title>Librio : Rendre Emprunt</title>
+    <title>Page Gestion</title>
+    <link href="../css/stylea.css" rel="stylesheet" type="text/css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 </head>
 
 <body>
     <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <img src="../../images/open-book-svgrepo-com.svg" class="logo" alt="">
+        <img src="../../Images/admin_13087915.svg" height="30px" alt="">
+        <h6 class="logophrase">Bonjour, <?php echo $_SESSION['prenom'] . ' ' . $_SESSION['nom']; ?>,</h6>
+        <nav class="navigation">
+            <a href="./admin_page.php"><button class="btnLogout">Retour</button></a>
+            <form action="" method="post">
+                <button class="btnLogout" name="deconnection">Déconnexion</button></a>
+            </form>
 
-            <a class="navbar-brand" href="admin_page.php">Admin</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-                aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" href="empreuntCours.php">Emprunt En cours</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="historiqueEmprunt.php">historique emprunt</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="logout.php">Logout</a>
-                    </li>
-                </ul>
-            </div>
-            </div>
         </nav>
     </header>
-    <div class="container">
-        <h1>Rendre Emprunt</h1>
+
+    <main class="container">
+        <h1 class="h1a">Rendre Emprunt</h1>
         <hr>
 
         <!-- Formulaire pour sélectionner l'utilisateur -->
         <form method="POST">
             <div class="mb-3">
-                <label for="fk_utilisateur" class="form-label">Sélectionner l'utilisateur :</label>
+                <label for="fk_utilisateur" class="form-label h1a">Sélectionner l'utilisateur :</label>
                 <select class="form-select" id="fk_utilisateur" name="fk_utilisateur" onchange="this.form.submit()"
                     required>
                     <option selected disabled value="">Choisir...</option>
                     <?php foreach ($utilisateurs as $utilisateur) : ?>
-
-                    <option value="<?= htmlspecialchars($utilisateur['fk_utilisateur']) ?>">
-                        <?= htmlspecialchars($utilisateur['fk_utilisateur']) ?>
-
+                    <option
+                        value="<?= isset($utilisateur['fk_utilisateur']) ? htmlspecialchars($utilisateur['fk_utilisateur']) : '' ?>">
+                        <?= isset($utilisateur['prenom']) ? htmlspecialchars($utilisateur['prenom']) : '' ?>
                     </option>
-
                     <?php endforeach; ?>
                 </select>
             </div>
         </form>
 
         <!-- Formulaire pour rendre l'emprunt -->
-        <?php if (!empty($_POST['fk_utilisateur'])) : ?>
+        <?php if (!empty($livresEmpruntes)) : ?>
         <form action="gestion_emp.php" method="POST">
-            <input type="hidden" name="fk_utilisateur" value="<?= htmlspecialchars($_POST['fk_utilisateur']) ?>">
+            <input type="hidden" name="fk_utilisateur"
+                value="<?= isset($_POST['fk_utilisateur']) ? htmlspecialchars($_POST['fk_utilisateur']) : '' ?>">
             <div class="mb-3">
-                <label for="id" class="form-label">Sélectionner le livre à rendre :</label>
+                <label for="id" class="form-label ha1">Sélectionner le livre à rendre :</label>
                 <select class="form-select" id="id" name="id" required>
                     <option selected disabled value="">Choisir...</option>
                     <?php foreach ($livresEmpruntes as $livre) : ?>
-                    <option value="<?= htmlspecialchars($livre['id']) ?>">
-                        <?= htmlspecialchars($livre['titre']) ?>
+                    <option value="<?= isset($livre['id']) ? htmlspecialchars($livre['id']) : '' ?>">
+                        <?= isset($livre['titre']) ? htmlspecialchars($livre['titre']) : '' ?>
                     </option>
                     <?php endforeach; ?>
                 </select>
             </div>
             <div class="mb-3">
-                <label for="date_retour" class="form-label">Date de retour :</label>
+                <label for="date_retour" class="form-label h1a">Date de retour :</label>
                 <input type="datetime-local" class="form-control" id="date_retour" name="date_retour" required>
             </div>
             <button type="submit" class="btn btn-primary" name="livre_id">Rendre Emprunt</button>
@@ -154,99 +130,108 @@ if (isset($_POST['livre_id'])) {
         </div>
         <?php unset($_SESSION['SuccessMessage']); ?>
         <?php endif; ?>
-    </div>
 
-    <!DOCTYPE html>
-    <html lang="fr">
+        <h1 class="h1a">Historique des Emprunts</h1>
+        <table class="table table-hover table-bordered">
+            <thead>
+                <tr>
+                    <th>ID Emprunt</th>
+                    <th>ID Livre</th>
+                    <th>Email Emprunteur</th>
+                    <th>Date d'emprunt</th>
+                    <th>Date de retour prévue</th>
+                    <th>Date de retour</th>
+                    <th>État</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($emprunts as $emprunt) : ?>
+                <tr>
+                    <td><?= isset($emprunt['id']) ? htmlspecialchars($emprunt['id']) : '' ?></td>
+                    <td><?= isset($emprunt['fk_livre']) ? htmlspecialchars($emprunt['fk_livre']) : '' ?></td>
+                    <td><?= isset($emprunt['fk_utilisateur']) ? htmlspecialchars($emprunt['fk_utilisateur']) : '' ?>
+                    </td>
+                    <td><?= isset($emprunt['date_emprunt']) ? htmlspecialchars($emprunt['date_emprunt']) : '' ?></td>
+                    <td><?= isset($emprunt['date_retour_prevue']) ? htmlspecialchars($emprunt['date_retour_prevue']) : '' ?>
+                    </td>
+                    <td><?= isset($emprunt['date_retour']) ? htmlspecialchars($emprunt['date_retour']) : 'Non rendu' ?>
+                    </td>
+                    <td>
+                        <?php
+                            if ($emprunt['date_retour'] === null) {
+                                echo 'Pas encore rendu';
+                            } else {
+                                $date_retour_max = date('Y-m-d H:i:s', strtotime($emprunt['date_emprunt'] . ' + 30 days'));
+                                if ($emprunt['date_retour'] < $emprunt['date_retour_prevue']) {
+                                    echo 'Rendu avant délai';
+                                } elseif ($emprunt['date_retour'] > $emprunt['date_retour_prevue']) {
+                                    echo 'Rendu après délai';
+                                } else {
+                                    echo 'Rendu à temps';
+                                }
+                            }
+                            ?>
+                    </td>
+                </tr>
+                <?php endforeach; ?>
 
-    <head>
-        <meta charset="UTF-8">
-        <title>Historique des Emprunts</title>
-    </head>
-
-    <body>
-        <h1>Historique des Emprunts</h1>
-        <table border="2">
-            <tr>
-                <th>ID Emprunt</th>
-                <th>ID Livre</th>
-                <th>Email Emprunteur</th>
-                <th>Date d'emprunt</th>
-                <th>Date de retour prévue</th>
-                <th>Date de retour</th>
-                <th>État</th>
-            </tr>
-            <?php
-            $sql = "SELECT *,
-            DATE_ADD(date_emprunt, INTERVAL 30 DAY) AS date_retour_max,
-            CASE
-            WHEN date_retour > DATE_ADD(date_emprunt, INTERVAL 30 DAY) THEN 'Rendu après délai'
-            ELSE 'Rendu avant délai'
-            END AS etat
-            FROM emprunts
-            ORDER BY date_emprunt DESC";
-
-            $stmt = $GLOBALS['pdo']->prepare($sql);
-            $stmt->execute();
-
-            $result = $stmt->fetchAll();
-
-            if ($result) {
-            foreach ($result as $emprunt){?>
-            <tr>
-                <td><?php echo $emprunt['id']; ?></td>
-                <td><?php echo $emprunt['fk_livre']; ?></td>
-                <td><?php echo $emprunt['fk_utilisateur']; ?></td>
-                <td><?php echo $emprunt['date_emprunt']; ?></td>
-                <td><?php echo $emprunt['date_retour_prevue']; ?></td>
-                <td><?php echo $emprunt['date_retour']; ?></td>
-                <td>
-                    <?php
-                        $date_retour = $emprunt['date_retour'];
-                        $date_retour_prevue = $emprunt['date_retour_prevue'];
-                        $etat = ($date_retour <= $date_retour_prevue) ? "Rendu avant délai" : "Rendu après délai";
-                        echo $etat;
-                        ?>
-                </td>
-            </tr>
-            <?php
-                        }
-                    }?>
+            </tbody>
         </table>
 
-        <!DOCTYPE html>
-        <html lang="fr">
+        <h1 class="h1a">Liste des Emprunts en Cours</h1>
+        <div class="table-responsive">
+            <table class="table table-bordered border-dark">
+                <thead>
+                    <tr>
+                        <th>ID Emprunt</th>
+                        <th>ID Livre</th>
+                        <th>Email Emprunteur</th>
+                        <th>Date d'emprunt</th>
+                        <th>Date de retour prévue</th>
+                        <th>Date de retour</th>
+                        <th>État</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($emprunts as $emprunt) : ?>
+                    <?php if ($emprunt['date_retour'] == null) { ?>
+                    <tr>
+                        <td><?= isset($emprunt['id']) ? htmlspecialchars($emprunt['id']) : '' ?></td>
+                        <td><?= isset($emprunt['fk_livre']) ? htmlspecialchars($emprunt['fk_livre']) : '' ?></td>
+                        <td><?= isset($emprunt['fk_utilisateur']) ? htmlspecialchars($emprunt['fk_utilisateur']) : '' ?>
+                        </td>
+                        <td><?= isset($emprunt['date_emprunt']) ? htmlspecialchars($emprunt['date_emprunt']) : '' ?>
+                        </td>
+                        <td><?= isset($emprunt['date_retour_prevue']) ? htmlspecialchars($emprunt['date_retour_prevue']) : '' ?>
+                        </td>
+                        <td><?= isset($emprunt['date_retour']) ? htmlspecialchars($emprunt['date_retour']) : 'Pas encore rendu' ?>
+                        </td>
+                        <td>
+                            <?php
+                                    if ($emprunt['date_retour'] === null) {
+                                        echo 'En cours';
+                                    } else {
+                                        $date_retour_max = date('Y-m-d H:i:s', strtotime($emprunt['date_emprunt'] . ' + 30 days'));
+                                        if (new DateTime() > new DateTime($date_retour_max)) {
+                                            echo 'Dépassé';
+                                        } else {
+                                            echo 'En cours';
+                                        }
+                                    }
+                                    ?>
+                        </td>
+                    </tr>
+                    <?php } ?>
+                    <?php endforeach; ?>
 
-        <head>
-            <meta charset="UTF-8">
-            <title>Liste des Emprunts en Cours</title>
-        </head>
+                </tbody>
+            </table>
+        </div>
+    </main>
 
-        <body>
-            <h1>Liste des Emprunts en Cours</h1>
-            <div class="table-responsive py-3 px-3">
-                <table class="table table-bordered border-dark" border="2">
-                    <thead>
-                        <tr>
-                            <th>ID Emprunt</th>
-                            <th>ID Livre</th>
-                            <th>Email Emprunteur</th>
-                            <th>Date d'emprunt</th>
-                            <th>Date de retour prévue</th>
-                            <th>État</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-
-                    </tbody>
-                </table>
-            </div>
-        </body>
-
-        </html>
-    </body>
-
-    </html>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
+    </script>
 </body>
 
 </html>

@@ -120,4 +120,22 @@ class Emprunt
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function getLivresEmpruntes()
+    {
+        // Exemple d'exécution d'une requête pour récupérer les livres empruntés
+        $query = "SELECT * FROM emprunts";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getAllEmprunts()
+    {
+        // Exemple d'exécution d'une requête pour récupérer tous les emprunts
+        $query = "SELECT * FROM emprunts";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

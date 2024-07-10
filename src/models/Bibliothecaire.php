@@ -4,9 +4,22 @@ require_once "Personne.php";
 
 class Bibliothecaire extends Personne
 {
+    private $pdo;
 
-    public function __construct()
+    public function __construct($pdo)
     {
+        $this->pdo = $pdo;
+
+        // Vérifie la session à chaque initialisation du contrôleur
+        if (session_status() == PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        // Redirige vers la page de connexion si l'utilisateur n'est pas connecté
+        if (!isset($_SESSION['user_id'])) {
+            header("Location: ../acceuil.php");
+            exit;
+        }
     }
 
 
@@ -32,7 +45,7 @@ class Bibliothecaire extends Personne
 
     public function modifierLivre($id, $titre, $auteur, $anne_pub, $genre, $nb_exemp, $p_couverture)
     {
-        $req = $GLOBALS['pdo']->prepare("UPDATE livres SET titre = :titre, auteur = :auteur, anne_pub = :anne_pub, genre = :genre, nb_exemp = :nb_exemp, p_couverture = :p_couverture WHERE id = :id");
+        $req = $GLOBALS['pdo']->prepare("UPDATE livres SET titre=:titre, auteur=:auteur, anne_pub=:anne_pub, genre=:genre, nb_exemp=:nb_exemp, p_couverture=:p_couverture WHERE id=:id");
         $req->bindParam(':id', $id, PDO::PARAM_INT);
         $req->bindParam(':titre', $titre);
         $req->bindParam(':auteur', $auteur);
@@ -42,11 +55,28 @@ class Bibliothecaire extends Personne
         $req->bindParam(':p_couverture', $p_couverture);
         $req->execute();
     }
+    public function modifierPersonne($email, $role, $nom, $prenom, $nb_emp, $mdp)
+    {
+        $req = $GLOBALS['pdo']->prepare("UPDATE personnes SET nom=:nom, prenom=:prenom, mdp=:mdp, nb_emp=:nb_emp, role=:role WHERE email=:email");
+        $req->bindParam(':nom', $nom);
+        $req->bindParam(':prenom', $prenom);
+        $req->bindParam(':mdp', $mdp);
+        $req->bindParam(':email', $email);
+        $req->bindParam(':role', $role, PDO::PARAM_INT);
+        $req->bindParam(':nb_emp', $nb_emp, PDO::PARAM_INT);
+        $req->execute();
+    }
 
     public function supprimerLivre($id)
     {
         $req = $GLOBALS['pdo']->prepare("DELETE FROM livres WHERE id = :id");
         $req->bindParam(':id', $id, PDO::PARAM_INT);
+        $req->execute();
+    }
+    public function supprimerPersonne($email)
+    {
+        $req = $GLOBALS['pdo']->prepare("DELETE FROM personnes WHERE email = :email");
+        $req->bindParam(':email', $email);
         $req->execute();
     }
 
@@ -60,11 +90,11 @@ class Bibliothecaire extends Personne
     public function historiqueEmprunt()
     {
         $sql = "SELECT *,
-                       DATE_ADD(date_emprunt, INTERVAL 30 DAY) AS date_retour_max,
-                       CASE
-                           WHEN date_retour > DATE_ADD(date_emprunt, INTERVAL 30 DAY) THEN 'Rendu après délai'
-                           ELSE 'Rendu avant délai'
-                       END AS etat
+                    DATE_ADD(date_emprunt, INTERVAL 30 DAY) AS date_retour_max,
+                    CASE
+                        WHEN date_retour > DATE_ADD(date_emprunt, INTERVAL 30 DAY) THEN 'Rendu après délai'
+                        ELSE 'Rendu avant délai'
+                        END AS etat
                 FROM emprunts
                 ORDER BY date_emprunt DESC";
 
@@ -80,19 +110,16 @@ class Bibliothecaire extends Personne
         return $req->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getEmpruntsEnCours()
-    {
-        global $pdo;
-        $req = $pdo->query("SELECT * FROM emprunts WHERE date_retour IS NULL");
-        return $req->fetchAll(PDO::FETCH_ASSOC);
-    }
 
 
-    public function getAllUsers()
+
+    public function getAllUtilisateurs()
     {
-        global $pdo;
-        $req = $pdo->query("SELECT User_id, Nom, Prenom FROM users");
-        return $req->fetchAll(PDO::FETCH_ASSOC);
+        // Exemple d'exécution d'une requête pour récupérer tous les utilisateurs
+        $query = "SELECT * FROM personnes";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getAllLivres()
@@ -164,5 +191,31 @@ class Bibliothecaire extends Personne
         $req->bindParam(':mdp', $mdp);
         $req->bindParam(':role', $role, PDO::PARAM_INT);
         $req->execute();
+    }
+
+    public function getHistoriqueEmprunts()
+    {
+        $sql = "SELECT *,
+                DATE_ADD(date_emprunt, INTERVAL 30 DAY) AS date_retour_max,
+                CASE
+                    WHEN date_retour > DATE_ADD(date_emprunt, INTERVAL 30 DAY) THEN 'Rendu après délai'
+                    ELSE 'Rendu avant délai'
+                END AS etat
+                FROM emprunts
+                ORDER BY date_emprunt DESC";
+        $stmt = $GLOBALS['pdo']->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getEmpruntsEnCours()
+    {
+        $sql = "SELECT *,
+                DATE_ADD(date_emprunt, INTERVAL 30 DAY) AS date_retour_max
+                FROM emprunts
+                ORDER BY date_emprunt DESC";
+        $stmt = $GLOBALS['pdo']->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

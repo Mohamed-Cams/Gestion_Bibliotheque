@@ -10,7 +10,8 @@ class BibliothecaireController
 
     public function __construct()
     {
-        $this->bibliothecaire = new Bibliothecaire(); // Initialisation de l'instance de Bibliothecaire
+        global $pdo;
+        $this->bibliothecaire = new Bibliothecaire($pdo); // Initialisation de l'instance de Bibliothecaire
     }
 
     public function ajouterLivre()
@@ -28,24 +29,27 @@ class BibliothecaireController
         }
     }
 
-    public function modifierLivre($id)
+    public function modifierLivre($id, $titre, $auteur, $anne_pub, $genre, $nb_exemp, $p_couverture)
     {
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $titre = $_POST['titre'];
-            $auteur = $_POST['auteur'];
-            $anne_pub = $_POST['anne_pub'];
-            $genre = $_POST['genre'];
-            $nb_exemp = $_POST['nb_exemp'];
-            $p_couverture = $_POST['p_couverture'];
-            $this->bibliothecaire->modifierLivre($id, $titre, $auteur, $anne_pub, $genre, $nb_exemp, $p_couverture);
-        }
-        include '../views/bibliothecaire/modifierLivre.php';
+        $this->bibliothecaire->modifierLivre($id, $titre, $auteur, $anne_pub, $genre, $nb_exemp, $p_couverture);
+    }
+    public function
+    modifierPersonne($email, $role, $nom, $prenom, $nb_emp, $mdp)
+    {
+        $this->bibliothecaire->modifierPersonne($email, $role, $nom, $prenom, $nb_emp, $mdp);
     }
 
     public function supprimerLivre($id)
     {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $this->bibliothecaire->supprimerLivre($id);
+        }
+        include '../views/bibliothecaire/supprimerLivre.php';
+    }
+    public function supprimerPersonne($email)
+    {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $this->bibliothecaire->supprimerPersonne($email);
         }
         include '../views/bibliothecaire/supprimerLivre.php';
     }
@@ -61,11 +65,7 @@ class BibliothecaireController
         include '../views/bibliothecaire/historiqueEmprunt.php';
     } */
 
-    public function historiqueEmprunt()
-    {
-        $this->bibliothecaire->historiqueEmprunt();
-        //include '../views/bibliothecaire/historiqueEmprunt.php';
-    }
+
 
     public function listerUtilisateurs()
     {
@@ -73,11 +73,7 @@ class BibliothecaireController
         include '../views/bibliothecaire/listerUtilisateurs.php';
     }
 
-    public function empruntsEnCours()
-    {
-        $historique = $this->bibliothecaire->getEmpruntsEnCours();
-        include '../views/bibliothecaire/empruntsEnCours.php';
-    }
+
 
     public function ajoutEmprunt()
     {
@@ -114,6 +110,13 @@ class BibliothecaireController
         }
     }
 
+    public function getAllUtilisateurs()
+    {
+        return $this->bibliothecaire->getAllUtilisateurs();
+    }
+
+
+
     public function logout()
     {
         // Démarrer la session si elle n'est pas déjà démarrée
@@ -128,7 +131,7 @@ class BibliothecaireController
         session_destroy();
 
         // Rediriger vers la page de connexion ou la page d'accueil
-        header("Location: ../acceuil");
+        header("Location: ../acceuil.php");
         exit;
     }
 
