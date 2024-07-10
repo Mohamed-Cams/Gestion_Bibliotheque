@@ -21,12 +21,12 @@ try {
 
 
 
-
 // Créer un nouveau document PDF
 $pdf = new TCPDF('L', 'mm', 'A3', true, 'UTF-8');
 $pdf->SetTitle('Liste des Emprunts');
 $pdf->AddPage();
-$pdf->setSubject('Historique des Emprunt');
+$html = '<h1>Booky: Liste Des Emprunts</h1><br>';
+$pdf->writeHTML($html);
 // Définir la police et le contenu du PDF
 $pdf->SetFont('helvetica', '', 12);
 

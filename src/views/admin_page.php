@@ -8,6 +8,12 @@ session_start();
 
 include('../../config/config.php');
 
+require_once '../../config/config.php';
+require_once '../models/Bibliotheque.php';
+require_once '../models/Bibliothecaire.php';
+require_once '../controllers/BibliothecaireController.php';
+
+$bibliothequeController = new BibliothecaireController();
 if ($_SESSION['role'] !== 'admin') {
     header('Location: ../public/index.php');
     exit;
@@ -57,12 +63,10 @@ if (isset($_POST['deconnection'])) {
     <title>Admin</title>
 
     <!-- bootstrap 5 CDN-->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
 
     <!-- bootstrap 5 Js bundle CDN-->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous">
     </script>
     <link href="../css/stylea.css" rel="stylesheet" type="" />
 </head>
@@ -70,18 +74,15 @@ if (isset($_POST['deconnection'])) {
 <body>
     <header>
         <img src="../../images/modele-logo-librairie-design-plat-dessine-main.png" class="logo" alt="">
-        <img src="../../Images/admin_13087915.svg" height="30px" alt="">
+        <img src="../../Images/admin_13087915.svg" height="50px" alt="">
         <h3 class="logophrase">Admin Booky</h3>
         <nav class="navigation">
             <button class="btnLogin-popup">Ajouter</button>
             <form action="" method="post">
                 <button class="btnLogout" name="deconnection">Déconnexion</button></a>
             </form>
-            <a href="./gest ion_emp.php">
+            <a href="./gestion_emp.php">
                 <button class="btnLogout">Emprunt</button>
-            </a>
-            <a href="./recherche.php">
-                <button class="btnLogout">Rechercher</button>
             </a>
         </nav>
     </header>
@@ -173,34 +174,32 @@ if (isset($_POST['deconnection'])) {
                         # code...
                         foreach ($result as $row) {
                     ?>
-                    <tr>
-                        <td><?= $row['id']; ?></td>
-                        <td>
-                            <img class="novel-item" style="height: 136px"
-                                src="../../Images/Couverture/<?= $row['p_couverture']; ?>" alt="">
-                        </td>
-                        <td><?= $row['titre']; ?></td>
-                        <td><?= $row['auteur']; ?></td>
-                        <td><?= $row['anne_pub']; ?></td>
-                        <td><?= $row['genre']; ?></td>
-                        <td><?= $row['nb_exemp']; ?></td>
-                        <td>
-                            <a href="modifierLivre.php?id=<?= $row['id']; ?>" class="btn btn-warning">Modifier</a>
-                        </td>
-                        <td>
-                            <form action="" method="POST">
-                                <button value="<?= $row['id']; ?>" class=" btn btn-danger"
-                                    name="supprimer">Supprimer</button>
-                            </form>
-                        </td>
-                    </tr>
-                    <?php
+                            <tr>
+                                <td><?= $row['id']; ?></td>
+                                <td>
+                                    <img class="novel-item" style="height: 136px" src="../../Images/Couverture/<?= $row['p_couverture']; ?>" alt="">
+                                </td>
+                                <td><?= $row['titre']; ?></td>
+                                <td><?= $row['auteur']; ?></td>
+                                <td><?= $row['anne_pub']; ?></td>
+                                <td><?= $row['genre']; ?></td>
+                                <td><?= $row['nb_exemp']; ?></td>
+                                <td>
+                                    <a href="modifierLivre.php?id=<?= $row['id']; ?>" class="btn btn-warning">Modifier</a>
+                                </td>
+                                <td>
+                                    <form action="" method="POST">
+                                        <button value="<?= $row['id']; ?>" class=" btn btn-danger" name="supprimer">Supprimer</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        <?php
                         }
                     } else {
                         ?>
-                    <tr>
-                        <td colspan="7">0 Livre Enregistrer</td>
-                    </tr>
+                        <tr>
+                            <td colspan="7">0 Livre Enregistrer</td>
+                        </tr>
                     <?php
                     }
                     ?>
@@ -231,29 +230,27 @@ if (isset($_POST['deconnection'])) {
                         # code...
                         foreach ($result as $row) {
                     ?>
-                    <tr>
-                        <td><?= $row['role']; ?></td>
-                        <td><?= $row['nom']; ?></td>
-                        <td><?= $row['prenom']; ?></td>
-                        <td><?= $row['email']; ?></td>
-                        <td>
-                            <a href="modifierPersonne.php?email=<?= $row['email']; ?>"
-                                class="btn btn-warning">Modifier</a>
-                        </td>
-                        <td>
-                            <form action="" method="POST">
-                                <button value="<?= $row['email']; ?>" class=" btn btn-danger"
-                                    name="supprimerp">Supprimer</button>
-                            </form>
-                        </td>
-                    </tr>
-                    <?php
+                            <tr>
+                                <td><?= $row['role']; ?></td>
+                                <td><?= $row['nom']; ?></td>
+                                <td><?= $row['prenom']; ?></td>
+                                <td><?= $row['email']; ?></td>
+                                <td>
+                                    <a href="modifierPersonne.php?email=<?= $row['email']; ?>" class="btn btn-warning">Modifier</a>
+                                </td>
+                                <td>
+                                    <form action="" method="POST">
+                                        <button value="<?= $row['email']; ?>" class=" btn btn-danger" name="supprimerp">Supprimer</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        <?php
                         }
                     } else {
                         ?>
-                    <tr>
-                        <td colspan="7">0 Biblio Enregistrer</td>
-                    </tr>
+                        <tr>
+                            <td colspan="7">0 Biblio Enregistrer</td>
+                        </tr>
                     <?php
                     }
                     ?>
@@ -262,11 +259,9 @@ if (isset($_POST['deconnection'])) {
         </div>
     </main>
     <script src="../../js/scriptadmin.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
     </script>
-    <script src="/docs/5.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
+    <script src="/docs/5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
     </script>
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>

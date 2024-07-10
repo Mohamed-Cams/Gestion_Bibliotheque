@@ -1,6 +1,6 @@
 * {
-  margin: 0;
-  padding: 0;
+  margin: 1;
+  padding: 5px;
   box-sizing: border-box;
   font-family: "Poppins", sans-serif;
 }
@@ -182,8 +182,8 @@ form .btn:hover {
 }
 
 .logo {
-  height: 50px;
-  width: 50px;
+  height: 100px;
+  width: 100px;
 }
 
 .novel-item {

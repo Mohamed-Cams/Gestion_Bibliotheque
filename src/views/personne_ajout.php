@@ -6,6 +6,13 @@ error_reporting(E_ALL);
 
 session_start();
 
+require_once '../../config/config.php';
+require_once '../models/Bibliotheque.php';
+require_once '../models/Bibliothecaire.php';
+require_once '../controllers/BibliothecaireController.php';
+
+$bibliothequeController = new BibliothecaireController();
+
 include('../../config/config.php');
 
 if ($_SESSION['role'] !== 'admin') {
@@ -81,9 +88,6 @@ if (isset($_POST['deconnection'])) {
             </form>
             <a href="./gestion_emp.php">
                 <button class="btnLogout">Emprunt</button>
-            </a>
-            <a href="./recherche.php">
-                <button class="btnLogout">Rechercher</button>
             </a>
         </nav>
     </header>

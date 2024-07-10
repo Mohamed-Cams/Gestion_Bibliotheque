@@ -8,7 +8,7 @@ session_start();
 
 include('../../config/config.php');
 
-if ($_SESSION['role'] !== 'admin') {
+if ($_SESSION['role'] !== 'utilisateur') {
     header('Location: ../public/index.php');
     exit;
 }
@@ -34,7 +34,7 @@ if ($_SESSION['role'] !== 'admin') {
         <img src="../../Images/admin_13087915.svg" height="30px" alt="">
         <h6 class="logophrase">Bonjour, <?php echo $_SESSION['prenom'] . ' ' . $_SESSION['nom']; ?>,</h6>
         <nav class="navigation">
-            <a href="./admin_page.php">
+            <a href="./utilisateur_page.php">
                 <button class="btnLogout">Retour</button>
             </a>
         </nav>
@@ -78,17 +78,10 @@ if ($_SESSION['role'] !== 'admin') {
                                     <th>Auteur</th>
                                     <th>Anné_Pub</th>
                                     <th>Genre</th>
-                                    <th>Exemplaire</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php
-                                /* $query = "SELECT * FROM livres";
-                                $stmt = $pdo->prepare($query);
-                                $stmt->execute();
-
-                                $result = $stmt->fetchAll();
-                                 */
                                 $con = mysqli_connect("localhost", "root", "", "bibliotheque");
 
                                 if (isset($_GET['search'])) {
@@ -106,7 +99,6 @@ if ($_SESSION['role'] !== 'admin') {
                                                 <td><?= $items['auteur']; ?></td>
                                                 <td><?= $items['anne_pub']; ?></td>
                                                 <td><?= $items['genre']; ?></td>
-                                                <td><?= $items['nb_exemp']; ?></td>
                                             </tr>
                                         <?php
                                         }
